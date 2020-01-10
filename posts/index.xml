@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Aria Ghora&#39;s Blog</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on Aria Ghora&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2020 Aria Ghora Prabono.</copyright>
+    <lastBuildDate>Fri, 10 Jan 2020 19:30:31 +0900</lastBuildDate>
+    
+        <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hello fellow mortals. I started a blog.</title>
+      <link>/posts/20200110-hello/</link>
+      <pubDate>Fri, 10 Jan 2020 19:30:31 +0900</pubDate>
+      
+      <guid>/posts/20200110-hello/</guid>
+      <description>I know that blogging takes time. I know that it is not easy to stay committed to writing. Nonetheless, I feel something missing if I have no personal development blog, as I am involved in many projects, as well as my personal projects. Furthermore, writing what I&#39;ve learned tends to make me understand them better.
+Scope of my blog I want to stay focused and relevant. Software development and machine learning are my strong suit (I mean, relatively stronger than any others of mine).</description>
+    </item>
+    
+  </channel>
+</rss>

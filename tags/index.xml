@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Aria Ghora&#39;s Blog</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on Aria Ghora&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>2020 Aria Ghora Prabono.</copyright>
+    <lastBuildDate>Fri, 10 Jan 2020 19:30:31 +0900</lastBuildDate>
+    
+        <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>other</title>
+      <link>/tags/other/</link>
+      <pubDate>Fri, 10 Jan 2020 19:30:31 +0900</pubDate>
+      
+      <guid>/tags/other/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
