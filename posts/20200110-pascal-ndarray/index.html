@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>I am implementing ndarray in pascal&nbsp;&ndash;&nbsp;Aria Ghora&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.a86ba8ca188b7d23c0a4c0a42c78c7177fe557995a989de292fbec539895a885086c9b99e4c2b0d43dfc75d62fd01f3f.css" integrity="sha384-qGuoyhiLfSPApMCkLHjHF3/lV5lamJ3ikvvsU5iVqIUIbJuZ5MKw1D38ddYv0B8/"><body>
+    <div class="base-body"><section id="header" class="site header max-body-width">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Aria Ghora's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/tags/">Tags</a><a class="nav item" href="/about">About</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
+    <h1 class="article title">I am implementing ndarray in pascal</h1><p class="article date">Friday, January 10, 2020</p></section><article class="article markdown-body"><p>I love pascal. But I also love numpy's <a href="https://numpy.org/"target="_blank">ndarray</a>. Most of my project coded in python will most likely use numpy. There is no good solution (at least to me) for realizing ndarray functionality in pascal. Thus, I am trying to implement one on my own (<a href="https://github.com/ariaghora/noe"target="_blank">here</a>). So be it.</p>
+<h2 id="meet-noe">Meet noe</h2>
+<p>I am not trying to be pretentious by competing with numpy. Heck, nobody is trying to compete with numpy. This is merely my experimental project to understand the mechanism behind n-dimensional array: how is its layout in memory, how to do indexing, etc.</p>
+<div align="center">
+<img src="/img/noe-txt.png" alt="logo" width="200px"></img>
+</div>
+<p>Furthermore, I am also learning what happens under the hood of the automatic differentiation for a neural network in near future. So, this project might be a good basis for it. Noe (In korean: 뇌, means &ldquo;brain&rdquo;) is developed towards the implementation of neural networks. Therefore the name.</p>
+<h2 id="what-can-it-accomplish">What can it accomplish?</h2>
+<p>As for now, not much. It is really minimum at its current form. But let me show you what I've learnt (and thus, implemented):</p>
+<h4 id="declaring-and-initializing-tensors">Declaring and initializing tensors</h4>
+<pre><code class="language-delphi" data-lang="delphi">uses
+  noe.core, // --&gt; main unit
+  noe.mat   // --&gt; extending standard math unit
+
+var
+  A, B, C: TTensor; 
+</code></pre><p>A tensor filled with a specific value:</p>
+<pre><code class="language-delphi" data-lang="delphi">{ 2x3 tensor filled with 1 }
+A := FullTensor([2, 3], 1);
+PrintTensor(A);
+</code></pre><pre><code>[[1.00, 1.00, 1.00]
+ [1.00, 1.00, 1.00]]
+</code></pre><p>A tensor of random values:</p>
+<pre><code class="language-delphi" data-lang="delphi">{ 2x2x3 tensor filled with randomized values }
+B := FullTensor([2, 2, 3]);
+PrintTensor(B);
+</code></pre><pre><code>[[[0.83, 0.03, 0.96]
+  [0.68, 0.91, 0.04]]
+
+ [[0.45, 0.83, 0.70]
+  [0.56, 0.31, 0.77]]]
+</code></pre><h4 id="multidimensional-indexing">Multidimensional indexing</h4>
+<p>Accessing the value of a tensor using a multidimensional index:</p>
+<pre><code class="language-delphi" data-lang="delphi">{ Get the value of tensor A at index 0,1 }
+WriteLn(A.GetVal([0, 1])); // will give 1
+
+{ Get the value of tensor B at index 1,0,2 }
+WriteLn(B.GetVal([1, 0, 1])); // will give 0.83
+</code></pre><p>A tensor with specified values:</p>
+<pre><code class="language-delphi" data-lang="delphi">{ 2x3 tensor filled with values specified }
+C := FullTensor(
+  [2, 3],      //--&gt; target shape
+
+  [1., 2., 3., //--&gt; the data
+   4., 5., 6.] //
+);
+PrintTensor(C);
+
+WriteLn;
+
+{ Reshape C into a 6x1 tensor }
+C.Reshape([6, 1]);
+PrintTensor(C);
+</code></pre><pre><code>[[1.00, 2.00, 3.00]
+ [4.00, 5.00, 6.00]]
+
+[[1.00]
+ [2.00]
+ [3.00]
+ [4.00]
+ [5.00]
+ [6.00]]
+</code></pre><p>Some basic element-wise arithmetical operations are also supported:</p>
+<pre><code class="language-delphi" data-lang="delphi">A := FullTensor([3, 3], 1);
+B := FullTensor([3, 3]);
+WriteLn('A:');
+PrintTensor(A);
+WriteLn('B:');
+PrintTensor(B);
+
+WriteLn('A + B:');
+PrintTensor(A + B);
+
+WriteLn('A - B:');
+PrintTensor(A - B);
+
+WriteLn('A * B:');
+PrintTensor(A * B);
+</code></pre><p>And some others:</p>
+<pre><code class="language-delphi" data-lang="delphi">A := FullTensor([3,3]) + FullTensor([3, 3], 1);
+PrintTensor( Log10(A) );
+PrintTensor( Log2(A) );
+
+A := FullTensor(
+  [2, 2],
+
+  [ 0., 30.,
+   45., 90.]
+);
+
+A := DegToRad(A); // Also check RadToDeg(A)
+PrintTensor( Sin(A) );
+PrintTensor( Cos(A) );
+PrintTensor( Tan(A) );
+
+A := FullTensor(
+  [2, 2],
+  [1., 2.,
+   3., 4.]
+);
+A := A ** 2;
+PrintTensor(A); 
+</code></pre><p>Please check <code>noe.math.pas</code> for more covered functionalities.</p>
+<h2 id="previous-attempt">Previous attempt</h2>
+<p>I attempted a solution for a general purpose machine learning framework before. It is called <code>darkteal</code>. It is in the same repository as <code>noe</code>, just in the different branch. You can access it <a href="https://github.com/ariaghora/noe/tree/master"target="_blank">here</a>. I learned a lot from developing it. From managing data representation (in a 2D array), loading data, performing matrix arithmetical operations, interfacing with existing computational library, etc. Even I managed to create some machine learning models out of it. However, I found that the approach is not scalable as the data representation was just a 2D matrix. I need it to be more flexible, with arbitrary dimension.</p>
+</article><section class="article labels"><a class="article tag" href=/tags/development/><span class="hashtag">#</span>development</a><a class="article tag" href=/tags/machine-learning/><span class="hashtag">#</span>machine learning</a></section><section class="article navigation"><p><a class="link" href="/posts/20200110-hello/"><span class="li"></span>Hello fellow mortals. I started a blog.</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><div class="footer-wrap">
+    <p class="copyright">2020 Aria Ghora Prabono.</p>
+    <p class="powerby"><span>Powered by </span><a href="https://gohugo.io" 
+        target="_blank">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/" 
+        target="_blank">Notepadium</a></p>
+</div></section><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>
