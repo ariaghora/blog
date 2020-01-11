@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
-    <loc>/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
-    <loc>/tags/development/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
+    <loc>/</loc><lastmod>2020-01-12T02:14:37+09:00</lastmod></url><url>
+    <loc>/tags/development/</loc><lastmod>2020-01-12T02:14:37+09:00</lastmod></url><url>
+    <loc>/posts/20200112-noe-now-supports-multidimensional/</loc><lastmod>2020-01-12T02:14:37+09:00</lastmod></url><url>
+    <loc>/posts/</loc><lastmod>2020-01-12T02:14:37+09:00</lastmod></url><url>
+    <loc>/tags/</loc><lastmod>2020-01-12T02:14:37+09:00</lastmod></url><url>
     <loc>/posts/20200110-pascal-ndarray/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
     <loc>/tags/machine-learning/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
-    <loc>/posts/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
-    <loc>/tags/</loc><lastmod>2020-01-10T22:28:27+09:00</lastmod></url><url>
     <loc>/posts/20200110-hello/</loc><lastmod>2020-01-08T19:30:31+09:00</lastmod></url><url>
     <loc>/tags/other/</loc><lastmod>2020-01-08T19:30:31+09:00</lastmod></url><url>
     <loc>/about/</loc><priority>0</priority></url><url>
