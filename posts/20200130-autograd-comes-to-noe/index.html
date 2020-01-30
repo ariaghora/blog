@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Autograd (and some fun stuffs) came to noe&nbsp;&ndash;&nbsp;Aria Ghora&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.a86ba8ca188b7d23c0a4c0a42c78c7177fe557995a989de292fbec539895a885086c9b99e4c2b0d43dfc75d62fd01f3f.css" integrity="sha384-qGuoyhiLfSPApMCkLHjHF3/lV5lamJ3ikvvsU5iVqIUIbJuZ5MKw1D38ddYv0B8/"><body>
+    <div class="base-body"><section id="header" class="site header max-body-width">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Aria Ghora's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/tags/">Tags</a><a class="nav item" href="/about">About</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
+    <h1 class="article title">Autograd (and some fun stuffs) came to noe</h1><p class="article date">Thursday, January 30, 2020</p></section><article class="article markdown-body"><p>Implementing automatic gradient computation, or simply autograd, is pretty challenging to me. Especially when the language that I use (and love) does not really have the tools that I really need, e.g., the multi-dimensional array. Thus, I ended up implement <a href="https://github.com/ariaghora/noe/tree/noe-dev/src"target="_blank">one</a>. It pretty much functional although the are still many aspect to tune. With noe providing tensor representation, I attempted to implement an automated gradient computation mechanism. Something like what other deep learning frameworks do to perform neural network parameter optimization.</p>
+<h2 id="where-did-i-start-off">Where did I start off</h2>
+<p>Obviously I had no background knowledge to do this. I simply wanted to do the magic other framework do. So I googled a bit and encountered some nice introductory materials.</p>
+<ul>
+<li>A <a href="http://videolectures.net/deeplearning2017_johnson_automatic_differentiation/"target="_blank">video lecture</a> by Matthew James Johnson, one of the guy behind <a href="https://github.com/HIPS/autograd/"target="_blank">HIPS autograd framework</a>. The lecture was good and gave me a bit understanding of what happens under the hood of the autograd. It turned out he also made the minimum version (<a href="https://github.com/mattjj/autodidact"target="_blank">autodidact</a>) of HIPS autograd that seems easier for anyone who wants to replicate or reimplement in other programming languages. But the fancy dynamic language features in python he used were too much to handle for me who use pascal.</li>
+<li>A github repo by <a href="https://github.com/evcu/numpy_autograd"target="_blank">Utku Evci</a>. What he has implemented was very minimal (so it is good for me) and does not really require fancy language-specific features. Just plain object-oriented approaches with some operator overloading that you can find in almost any languages. The API looks like pytorch's, which I am familiar with. So I chose this repo as my starting point.</li>
+</ul>
+<p>It turned out that autograds out there are implemented based on a computational graph. Christoper Olah explained it very well <a href="https://colah.github.io/posts/2015-08-Backprop/"target="_blank">in his blog</a>. Consider following expressions:</p>
+<p>$$ c = a+b $$
+$$ d = b+1 $$
+$$ e = c*d $$</p>
+<p>All these operations including the variables are represented as nodes. Visually (and blatantly taken from Olah's blog) the resulted graph will look like this:</p>
+<div align="center">
+<img src="https://colah.github.io/posts/2015-08-Backprop/img/tree-def.png" alt="logo" width="300px"></img>
+</div>
+<h2 id="pascal-implementation-with-noe">Pascal implementation with noe</h2>
+<p>My implementation seems close to pytorch, i.e., the tensor that holds the data is wrapped inside a variable. The variable holds the gradient information and other required information for building and operating the computational graph.</p>
+<pre><code class="language-pascal" data-lang="pascal">uses
+    noe.core,
+    noe.math,
+    noe.autograd,
+    noe.op.base;
+
+var
+    A: TTensor;
+    X, Y: TVariable;
+
+begin
+    { rank-1 noe tensor containing values 0...9 }
+    A := Range(10);
+
+    { Tensor A is then wrapped inside a TVariable }
+    X := TVariable.Create(A);
+
+    { We set RequiresGrad to true as we want to compute
+    the gradient of a function w.r.t. X }
+    X.RequiresGrad := True;
+    ...
+</code></pre><p>Then we determine <code>Y</code> as the function of <code>X</code> (for example, $y = 2x^2-2$). Subsequently <code>Y.Backpropagate</code> triggers the computation of the gradient for all nodes in the graph.</p>
+<pre><code class="language-pascal" data-lang="pascal">    ...
+
+    { y = 2x^2 - 2 }
+    Y := 2 * X * X - 2;
+    Y.Backpropagate;
+
+    Writeln('X ='); PrintTensor(X.Data); Writeln;
+    Writeln('Y ='); PrintTensor(Y.Data); Writeln;
+    Writeln('dY/dX ='); PrintTensor(X.Grad); Writeln;
+
+end.
+
+</code></pre><p>The output:</p>
+<pre><code>X =
+[0.00, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 8.00, 9.00]
+
+Y =
+[-2.00, 0.00, 6.00, 16.00, 30.00, 48.00, 70.00, 96.00, 126.00, 160.00]
+
+dY/dX =
+[0.00, 4.00, 8.00, 12.00, 16.00, 20.00, 24.00, 28.00, 32.00, 36.00]
+</code></pre><p>It is quite unsatisfying if I cannot verify visually. So I decided to make graphical visual display possible.</p>
+<h2 id="plotting-the-data">Plotting the data</h2>
+<p>At this moment, relying the LCL or even creating a plotting system will surely consume lots of time. Moreover, I want to be able to show plot regardless the project being GUI or console application. What came to my mind first was to make the interface to an existing plotting program. In this regard, I use GNU plot. The detailed API for plotting will be on a separated post. Essentially, the <em>wrapper</em> generates the script which is then executed by GNU plot program. This is the simplest and the fastest, I think. Why not just use GNU plot directly? Because I don't want the user to hop programming or scripting language just to display the visual. Moreover, piping the tensor data as the result of computation to GNU plot is a nontrivial task, especially when the data is big.</p>
+<p>First, add the required unit and declare the required variable for plotting.</p>
+<pre><code class="language-pascal" data-lang="pascal">uses
+    ...
+    noe.plot.gnuplot;
+
+var
+    ...
+    plot1, plot2: TPlot;
+
+begin
+    ...
+    ...
+    ...
+
+    GNUPlotInit('gnuplot');
+    figure := TFigure.Create;
+    figure.Title := 'y = 2x^2 - 2';
+
+    plot1 := TPlot.Create;
+    plot1.PlotType := ptLines;
+    plot1.Title := 'y';
+    plot1.SetDataPoints(Y.Data); // y
+
+    plot2 := TPlot.Create;
+    plot2.PlotType := ptLines;
+    plot2.Title := 'dy/dx';
+    plot2.SetDataPoints(X.Grad); // dy/dx
+
+    figure.AddPlot(plot1);
+    figure.AddPlot(plot2);
+    figure.Show;
+
+    ReadLn;
+
+end.
+</code></pre><p>Having ensured the <code>gnuplot</code> executable is already in the system search path, the output will be like this.</p>
+<div align="center">
+<img src="/img/autograd1.jpg" width="400px"></img>
+</div>
+<p>We can also use trigonometric functions.</p>
+<pre><code class="language-pascal" data-lang="pascal">    { rank-1 noe tensor containing linearly spaced values from -5 to 5
+    with step size of 0.1 }
+    A := Range(-5, 5, 0.1);
+
+    X := TVariable.Create(A);
+    X.RequiresGrad := True;
+
+    Y := Tanh(X);
+    Y.Backpropagate;
+</code></pre><p>The we display the result.</p>
+<div align="center">
+<img src="/img/autograd2.jpg" width="400px"></img>
+</div>
+<p>You may see the complete functions in noe github repository <a href="https://github.com/ariaghora/noe/blob/noe-dev/src/noe.op.base.pas"target="_blank">here</a>. Note that at this moment, noe only support computation of first-order derivative. The implementation of higher order derivative is in my plan. But not now, as it is not that crucial.</p>
+<p>&hellip;</p>
+<p>Having the autograd implemented, we can now move toward the development of neural networks. But, again, that will be in the separated post. Cheers.</p>
+</article><section class="article labels"><a class="article tag" href=/tags/machine-learning/><span class="hashtag">#</span>machine learning</a><a class="article tag" href=/tags/development/><span class="hashtag">#</span>development</a></section><section class="article navigation"><p><a class="link" href="/posts/20200112-noe-now-supports-multidimensional/"><span class="li"></span>Noe now supports multidimensional indexing</a class="link">
+    </p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "ariaghoraprabono" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div><section id="footer" class="footer max-body-width"><div class="footer-wrap">
+    <p class="copyright">2020 Aria Ghora Prabono.</p>
+    <p class="powerby"><span>Powered by </span><a href="https://gohugo.io" 
+        target="_blank">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/" 
+        target="_blank">Notepadium</a></p>
+</div></section><script defer type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-e/4/LvThKH1gwzXhdbY2AsjR3rm7LHWyhIG5C0jiRfn8AN2eTN5ILeztWw0H9jmN" crossorigin="anonymous"></script>
+        <script
+            type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });</script><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>

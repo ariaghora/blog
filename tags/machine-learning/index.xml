@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2020 Aria Ghora Prabono.</copyright>
-    <lastBuildDate>Fri, 10 Jan 2020 22:28:27 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jan 2020 18:34:50 +0700</lastBuildDate>
     
         <atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Autograd (and some fun stuffs) came to noe</title>
+      <link>/posts/20200130-autograd-comes-to-noe/</link>
+      <pubDate>Thu, 30 Jan 2020 18:34:50 +0700</pubDate>
+      
+      <guid>/posts/20200130-autograd-comes-to-noe/</guid>
+      <description>Implementing automatic gradient computation, or simply autograd, is pretty challenging to me. Especially when the language that I use (and love) does not really have the tools that I really need, e.g., the multi-dimensional array. Thus, I ended up implement one. It pretty much functional although the are still many aspect to tune. With noe providing tensor representation, I attempted to implement an automated gradient computation mechanism. Something like what other deep learning frameworks do to perform neural network parameter optimization.</description>
+    </item>
     
     <item>
       <title>I am implementing ndarray in pascal</title>
