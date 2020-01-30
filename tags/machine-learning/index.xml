@@ -18,7 +18,7 @@
       <pubDate>Thu, 30 Jan 2020 18:34:50 +0700</pubDate>
       
       <guid>/posts/20200130-autograd-comes-to-noe/</guid>
-      <description>Implementing automatic gradient computation, or simply autograd, is pretty challenging to me. Especially when the language that I use (and love) does not really have the tools that I really need, e.g., the multi-dimensional array. Thus, I ended up implement one. It pretty much functional although the are still many aspect to tune. With noe providing tensor representation, I attempted to implement an automated gradient computation mechanism. Something like what other deep learning frameworks do to perform neural network parameter optimization.</description>
+      <description>Implementing automatic gradient computation, or simply autograd, is pretty challenging to me. Especially when the language that I use (and love) does not really have the tools that I really need, e.g., the multi-dimensional array. Thus, I ended up implementing one. It pretty much functional although the are still many aspect to tune. With noe providing tensor representation, I attempted to implement an automated gradient computation mechanism. Something like what other deep learning frameworks do to perform neural network parameter optimization.</description>
     </item>
     
     <item>
